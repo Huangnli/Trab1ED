@@ -2,7 +2,7 @@
 *
 * Julio Huang
 * Trabalho 1
-* Professor: Diego
+* Professor: Diego Padilha Rubert
 *
 */
 #include <cstdio>
