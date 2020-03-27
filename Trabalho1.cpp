@@ -87,6 +87,26 @@ private:
   static const int TAMANHO = 47; // Tamanho da tabela
   ListaP tabela[TAMANHO];        // Listas da tabela
 
-  int valor(char p[]); // Valor da palavra p
-  int h(char p[]);     // Função de hash
+  int valor(char p[]){
+    int v = 0;
+    int i = 0;
+    while(p[i] != ' '){
+      v = v + p[i];
+      i++;
+    }
+    return v;
+  } // Valor da palavra p
+  int h(char p[]){
+    return valor(p) % TAMANHO;
+  }     // Função de hash
 };
+
+int main(){
+  
+  FILE *arq;
+  char linha[100];
+  char *result;
+   
+  
+  
+}
