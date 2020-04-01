@@ -105,8 +105,87 @@ int main(){
   
   FILE *arq;
   char linha[100];
-  char *result;
-   
+  char word[MAX] = {NULL};
+
+  //Palavra palavra = new Palavra();
+
+  int line = 0;
+  int i = 0;
+  int j = 0;
+  arq = fopen("texto.txt", "rt");
+  while(fgets(linha, sizeof(linha), arq) != NULL){
+    i = 0;
+    linha[strlen(linha) - 1] = '\0';
+    while(linha[i] != '\0'){ 
+      if((linha[i] >= 'A' && linha[i] <= 'Z') || (linha[i] >= 'a' && linha[i] <= 'z')){
+        word[j] = tolower(linha[i]);
+        i++;
+        j++;
+      }else{
+        if(j >= MIN){
+          //palavra[word];
+          printf("%s\n", word);
+        }
+        for(int i = 0; i < j; i++){
+          word[i] = '\0';
+        }
+        i++;
+        j = 0;
+      }
+    }
+    line++;
+    printf("%d\n", line);
+  }
+  fclose(arq);
+}
+
+Ocorrencia::Ocorrencia(int linha){
+  this->linha = linha;
+  prox = NULL;
+}
+
+Ocorrencia::~Ocorrencia(){
+}
+
+ListaO::ListaO(){
+  inicio = NULL;
+  fim = NULL;
+}
+
+ListaO::~ListaO(){
+}
+
+Palavra::Palavra(char p[]){
+  int i = 0;
+  while(p[i] != '\n'){
+    this->p[i] = p[i];
+    i++;
+  }
+  prox = NULL;
   
-  
+}
+
+ListaP::ListaP(){
+  inicio = NULL;
+  fim = NULL;
+}
+
+ListaP::~ListaP(){
+}
+
+TabelaDispersao::TabelaDispersao(){
+
+}
+
+TabelaDispersao::~TabelaDispersao(){
+}
+
+void TabelaDispersao::escreve(){
+
+}
+
+void TabelaDispersao::novaOcorrencia(char p[], int linha){
+  int hash;
+  hash = h(p); 
+
 }
