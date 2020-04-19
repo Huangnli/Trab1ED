@@ -90,7 +90,7 @@ private:
   int valor(char p[]){
     int v = 0;
     int i = 0;
-    while(p[i] != ' '){
+    while(p[i] != '\0'){
       v = v + p[i];
       i++;
     }
@@ -101,20 +101,23 @@ private:
   }     // Função de hash
 };
 
-int main(){
+int main(int argc, char *argv[]){
   
   FILE *arq;
   char linha[100];
-  char word[MAX] = {NULL};
+  char word[MAX] = {'\0'};
+  TabelaDispersao TD;
 
   //Palavra palavra = new Palavra();
 
-  int line = 0;
+  int line = 1;
   int i = 0;
   int j = 0;
-  arq = fopen("texto.txt", "rt");
+  
+  arq = fopen(argv[1], "rt");
   while(fgets(linha, sizeof(linha), arq) != NULL){
     i = 0;
+    //printf("%d\n", line);
     linha[strlen(linha) - 1] = '\0';
     while(linha[i] != '\0'){ 
       if((linha[i] >= 'A' && linha[i] <= 'Z') || (linha[i] >= 'a' && linha[i] <= 'z')){
@@ -123,8 +126,8 @@ int main(){
         j++;
       }else{
         if(j >= MIN){
-          //palavra[word];
-          printf("%s\n", word);
+          TD.novaOcorrencia(word, line);
+          //printf("%s\n", word);
         }
         for(int i = 0; i < j; i++){
           word[i] = '\0';
@@ -134,8 +137,8 @@ int main(){
       }
     }
     line++;
-    printf("%d\n", line);
   }
+  TD.escreve();
   fclose(arq);
 }
 
@@ -155,14 +158,50 @@ ListaO::ListaO(){
 ListaO::~ListaO(){
 }
 
+void ListaO::insere(int linha){
+  Ocorrencia *n = new Ocorrencia(linha);
+  if(inicio == NULL){
+    inicio = n;
+    fim = n;
+  }
+  else {
+    n->prox = fim->prox;
+    fim->prox = n;
+    fim = n;
+  }
+}
+
+void ListaO::escreve(){
+  fim = inicio;
+  while(fim != NULL){
+    if(fim->prox == NULL){
+      printf("%d) ", fim->linha);
+      fim = fim->prox;
+    }
+    else{
+      printf("%d, ", fim->linha);
+      fim = fim->prox;
+    }
+  }
+}
+
 Palavra::Palavra(char p[]){
   int i = 0;
-  while(p[i] != '\n'){
+  while(p[i] != '\0'){
     this->p[i] = p[i];
     i++;
   }
-  prox = NULL;
-  
+  prox = NULL; 
+  for(int j = 0; j < i; j++){
+    this->p[i] = '\0';
+  }
+}
+
+Palavra::~Palavra(){
+}
+
+void Palavra::insere(int linha){
+  ocorrencias.insere(linha);
 }
 
 ListaP::ListaP(){
@@ -170,22 +209,91 @@ ListaP::ListaP(){
   fim = NULL;
 }
 
+void Palavra::escreve(){
+  printf("%s(", p);
+  ocorrencias.escreve();
+}
+
+Palavra* ListaP::insere(char p[]){
+  Palavra *pal = new Palavra(p);
+  if(inicio == NULL){
+    inicio = pal;
+    fim = pal;
+    return pal;
+  }
+  else {
+    pal->prox = fim->prox;
+    fim->prox = pal;
+    fim = pal;
+    return pal;
+  }
+}
+
+Palavra* ListaP::busca(char p[]){
+  Palavra *pal = new Palavra(p);
+  Palavra *inic;
+
+  if(inicio == NULL){
+    return inicio;
+  }
+  else{     
+    inic = inicio;
+    while(inic){
+      if(*inic->p == *pal->p){
+        //printf("%s1\n", inic->p);
+        return inic;
+      }
+      else{
+        inic = inic->prox;
+      }
+    }
+    return NULL;
+  }
+}
+
+void ListaP::escreve(){
+  if(inicio == NULL){
+    printf("\n");
+  }
+  fim = inicio;
+  while(fim){
+    fim->escreve();
+    fim = fim->prox;
+    if(fim == NULL)
+      printf("\n");
+  }
+}
+
 ListaP::~ListaP(){
 }
 
 TabelaDispersao::TabelaDispersao(){
-
 }
 
 TabelaDispersao::~TabelaDispersao(){
 }
 
 void TabelaDispersao::escreve(){
-
+  int i = 0;
+  while(i < TAMANHO){
+    printf("%d: ", i);
+    tabela[i].escreve();
+    i++;
+  }
 }
 
 void TabelaDispersao::novaOcorrencia(char p[], int linha){
   int hash;
-  hash = h(p); 
+  Palavra *pa;
+  Palavra *busc;
 
+  hash = h(p);
+  busc = tabela[hash].busca(p);
+  if(busc == NULL){
+    pa = tabela[hash].insere(p);
+    pa->insere(linha);
+  }
+  else{
+    busc->insere(linha);
+  }
 }
