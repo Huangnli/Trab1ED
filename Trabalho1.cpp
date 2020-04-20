@@ -86,6 +86,7 @@ public:
 private:
   static const int TAMANHO = 47; // Tamanho da tabela
   ListaP tabela[TAMANHO];        // Listas da tabela
+  int qntpal = 0;
 
   int valor(char p[]){
     int v = 0;
@@ -219,13 +220,12 @@ Palavra* ListaP::insere(char p[]){
   if(inicio == NULL){
     inicio = pal;
     fim = pal;
-    return pal;
+    return fim;
   }
   else {
-    pal->prox = fim->prox;
     fim->prox = pal;
     fim = pal;
-    return pal;
+    return fim;
   }
 }
 
@@ -234,6 +234,7 @@ Palavra* ListaP::busca(char p[]){
   Palavra *inic;
 
   if(inicio == NULL){
+    delete(pal);
     return inicio;
   }
   else{     
@@ -241,12 +242,14 @@ Palavra* ListaP::busca(char p[]){
     while(inic){
       if(*inic->p == *pal->p){
         //printf("%s1\n", inic->p);
+        delete(pal);
         return inic;
       }
       else{
         inic = inic->prox;
       }
     }
+    delete(pal);
     return NULL;
   }
 }
@@ -275,11 +278,14 @@ TabelaDispersao::~TabelaDispersao(){
 
 void TabelaDispersao::escreve(){
   int i = 0;
+  double fatcarg;
   while(i < TAMANHO){
     printf("%d: ", i);
     tabela[i].escreve();
     i++;
   }
+  fatcarg = float(qntpal)/float(TAMANHO);
+  printf("Fator de carga: %g\n", fatcarg);
 }
 
 void TabelaDispersao::novaOcorrencia(char p[], int linha){
@@ -292,6 +298,7 @@ void TabelaDispersao::novaOcorrencia(char p[], int linha){
   if(busc == NULL){
     pa = tabela[hash].insere(p);
     pa->insere(linha);
+    qntpal++;
   }
   else{
     busc->insere(linha);
