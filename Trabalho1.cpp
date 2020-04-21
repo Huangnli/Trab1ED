@@ -119,12 +119,24 @@ int main(int argc, char *argv[]){
   while(fgets(linha, sizeof(linha), arq) != NULL){
     i = 0;
     //printf("%d\n", line);
-    linha[strlen(linha) - 1] = '\0';
+    if(linha[strlen(linha)] != '\0'){
+      linha[strlen(linha) - 1] = '\0';
+    }
+    //printf("%s\n", linha);
     while(linha[i] != '\0'){ 
       if((linha[i] >= 'A' && linha[i] <= 'Z') || (linha[i] >= 'a' && linha[i] <= 'z')){
         word[j] = tolower(linha[i]);
         i++;
         j++;
+        if(linha[i+1] == 0 &&       //verificar se a proxima posição é nulo e se é letra 
+        ((linha[i] >= 'A' && linha[i] <= 'Z') || 
+        (linha[i] >= 'a' && linha[i] <= 'z'))){      
+          word[j] = tolower(linha[i]); 
+          TD.novaOcorrencia(word, line);
+          for(int i = 0; i < j; i++)
+            word[i] = '\0';
+          //printf("%s\n", word);
+        }
       }else{
         if(j >= MIN){
           TD.novaOcorrencia(word, line);
@@ -157,6 +169,15 @@ ListaO::ListaO(){
 }
 
 ListaO::~ListaO(){
+  Ocorrencia *next;
+  Ocorrencia *delt;
+
+  next = inicio;
+  while(next){
+    delt = next;
+    next = next->prox;
+    delete(delt);
+  }
 }
 
 void ListaO::insere(int linha){
@@ -165,7 +186,7 @@ void ListaO::insere(int linha){
     inicio = n;
     fim = n;
   }
-  else {
+  else if(fim->linha != linha){
     n->prox = fim->prox;
     fim->prox = n;
     fim = n;
@@ -180,7 +201,7 @@ void ListaO::escreve(){
       fim = fim->prox;
     }
     else{
-      printf("%d, ", fim->linha);
+      printf("%d,", fim->linha);
       fim = fim->prox;
     }
   }
@@ -268,6 +289,15 @@ void ListaP::escreve(){
 }
 
 ListaP::~ListaP(){
+  Palavra *next;
+  Palavra *delt;
+
+  next = inicio;
+  while(next){
+    delt = next;
+    next = next->prox;
+    delete(delt);
+  }
 }
 
 TabelaDispersao::TabelaDispersao(){
